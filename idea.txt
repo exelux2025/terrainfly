@@ -1,0 +1,351 @@
+# TerrainFly — Product Idea & Technical Architecture
+
+## 1. Product Overview
+
+TerrainFly is a web-based application that transforms GPS activities into immersive 3D terrain visualizations and cinematic route flyover videos.
+
+Users can upload Garmin FIT/GPX activity files and automatically generate realistic 3D representations of their running, hiking, trekking, cycling, or walking routes.
+
+The primary goal is to make it effortless to turn an outdoor activity into a visually appealing, shareable video, similar to Strava's 3D Flyover feature but with greater customization and cinematic control.
+
+## 2. Core User Experience
+
+1. User uploads a Garmin FIT, GPX, or TCX file.
+2. Application extracts GPS coordinates, elevation, timestamps, distance, and available activity statistics.
+3. System retrieves 3D terrain elevation data and map imagery for the activity's geographical area.
+4. Recorded GPS route is rendered over the 3D landscape.
+5. User can interact with the map through zoom, rotation, and tilt.
+6. Application generates an animated flyover following the recorded route.
+7. User customizes camera angles, animation speed, route styling, and statistics overlays.
+8. User exports a video optimized for Instagram, YouTube, or personal sharing.
+
+Initial target activities:
+- Mountain treks and hiking trails
+- Road running and cycling
+- Parks and urban running routes
+- Trail running and outdoor adventures
+
+## 3. Product Roadmap
+
+### V1 — Interactive 3D Route Viewer
+
+Goal: Validate GPS parsing and terrain rendering.
+
+Features:
+- Upload FIT/GPX files
+- Parse GPS coordinates and elevation
+- Display activity route on a 3D terrain map
+- Satellite and standard map styles
+- Interactive zoom, rotate, pan, and tilt
+- Display distance, duration, and elevation gain
+- Automatic camera framing of the entire route
+
+Estimated development: 3–5 days.
+
+### V2 — Automated Route Flyover
+
+Goal: Transform a static route into an animated journey.
+
+Features:
+- Animated camera following the GPS track
+- Progressive route drawing
+- Moving position marker
+- Adjustable playback speed
+- Camera zoom and tilt controls
+- Smooth interpolation between GPS points
+- Start and finish markers
+- Basic animation preview
+
+Estimated additional development: 4–7 days.
+
+### V3 — Cinematic Video Generator
+
+Goal: Generate professional, social-media-ready videos.
+
+Features:
+- Automatic cinematic camera movement
+- Orbit and aerial flyover transitions
+- Dynamic camera altitude and bearing
+- Route and elevation statistics overlays
+- Custom titles and activity summaries
+- Vertical 9:16 and landscape 16:9 exports
+- 1080p MP4 rendering
+- Background music and optional transitions
+- Custom themes and route colors
+
+Estimated additional development: 1–2 weeks.
+
+### V4 — Advanced Adventure Storytelling
+
+Potential future features:
+- Garmin Connect integration
+- Automatic detection of climbs, summits, and notable segments
+- Highlight steep gradients and elevation changes
+- Synchronize phone or action-camera footage with GPS timestamps
+- AI-assisted cinematic camera planning
+- Multiple routes and activity comparisons
+- Branded video templates
+- Automated adventure recap videos
+
+## 4. High-Level Architecture
+
+User Interface (React / Next.js)
+        |
+        v
+Activity File Upload
+        |
+        v
+FIT / GPX / TCX Parser
+        |
+        v
+GPS Processing Engine
+        |
+        +-- Coordinates and timestamps
+        +-- Elevation and distance
+        +-- Route smoothing and interpolation
+        +-- Activity statistics
+        |
+        v
+3D Geospatial Rendering Engine
+        |
+        +-- Terrain elevation tiles
+        +-- Satellite / map imagery
+        +-- Route geometry
+        +-- Start / finish markers
+        |
+        v
+Camera Animation Engine
+        |
+        +-- Route-following camera
+        +-- Camera bearing and pitch
+        +-- Dynamic zoom and altitude
+        +-- Animation timeline
+        |
+        v
+Video Rendering Pipeline
+        |
+        +-- Frame capture
+        +-- Statistics overlays
+        +-- Video encoding (FFmpeg)
+        |
+        v
+MP4 Export / Sharing
+
+## 5. Proposed Technology Stack
+
+Frontend:
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+
+3D Mapping:
+- Mapbox GL JS for the initial MVP
+- MapLibre GL JS as an open-source alternative
+- CesiumJS for advanced 3D geospatial capabilities
+- Three.js for optional custom visual effects
+
+GPS Processing:
+- FIT file parser
+- GPX/XML parser
+- GeoJSON for normalized route representation
+- Turf.js for geospatial calculations
+
+Terrain and Map Data:
+- Digital Elevation Models (DEM)
+- Terrain-RGB or terrain elevation tiles
+- Satellite imagery or map raster tiles
+- Optional OpenStreetMap vector data
+
+Animation:
+- Custom camera interpolation
+- Route progress timeline
+- Smooth easing functions
+- Camera keyframe system
+
+Video Export:
+- Browser canvas/frame capture for prototype
+- FFmpeg for video encoding
+- Optional headless browser rendering pipeline
+
+Backend:
+- Not required for the first interactive MVP
+- Node.js API for processing and export jobs when needed
+- Optional object storage and rendering workers for production
+
+## 6. Important Technical Principles
+
+Garmin provides activity data, not the surrounding 3D landscape.
+
+GPS data determines where the user traveled.
+
+Terrain elevation datasets determine the geographical landscape.
+
+Map and satellite tiles provide the visual appearance.
+
+The camera engine determines how the journey is presented.
+
+The video rendering pipeline transforms the animation into a downloadable video.
+
+For the MVP, avoid developing a custom 3D engine. Use existing geospatial rendering libraries and focus engineering effort on route visualization, animation quality, and user experience.
+
+## 7. Main Technical Challenges
+
+Terrain Accuracy:
+Elevation datasets have limited resolution. Narrow paths, cliffs, rocks, buildings, and vegetation may not be represented accurately.
+
+GPS Quality:
+Recorded routes can contain drift, missing points, inaccurate elevation, and irregular timestamps.
+
+Route Alignment:
+GPS elevation and terrain elevation can differ. Routes must be positioned correctly above the rendered terrain without visibly floating or clipping through it.
+
+Camera Automation:
+Automatic flyovers must handle sharp turns, steep slopes, mountain obstructions, and changes in route direction.
+
+Rendering Performance:
+High-resolution terrain, satellite imagery, and camera animations can require significant GPU resources.
+
+Video Export:
+Consistent frame capture, tile-loading synchronization, and reliable MP4 generation are more complicated than interactive browser playback.
+
+Data Licensing:
+Commercial use and video export rights must be checked for mapping SDKs, elevation datasets, satellite imagery, and other third-party assets.
+
+## 8. MVP Development Strategy
+
+Start with a real Garmin activity, preferably a mountainous trek with significant elevation variation.
+
+Suggested test case:
+Mount Rinjani — Senaru Crater Rim trek, Lombok, Indonesia.
+
+Initial implementation sequence:
+
+1. Build a simple FIT/GPX upload interface.
+2. Convert uploaded data into normalized GeoJSON.
+3. Render the route using Mapbox GL JS.
+4. Enable 3D terrain and satellite imagery.
+5. Automatically position the camera to display the entire route.
+6. Implement route-following animation.
+7. Add a playback timeline and basic camera controls.
+8. Generate a short test video.
+9. Improve camera transitions and terrain presentation.
+
+Initial success criteria:
+- A real Garmin route renders accurately.
+- The terrain matches the geographical location.
+- Users can navigate the 3D map smoothly.
+- The flyover follows the actual route.
+- A short animation can be exported as MP4.
+
+## 9. Product Differentiation
+
+The initial product overlaps with existing GPS visualization tools, including Strava Flyover and Relive.
+
+The long-term opportunity is not simply another route viewer.
+
+TerrainFly could evolve into an automated outdoor adventure storytelling platform.
+
+Potential differentiators:
+- Cinematic-quality 3D animations
+- More customizable camera movements
+- Automatic summit and climb highlights
+- Rich Garmin activity overlays
+- GPS-synchronized real-world video
+- High-quality social-media templates
+- One-click adventure recap generation
+
+## 10. Potential Business Model
+
+Possible future monetization:
+- Free interactive 3D route viewer
+- Limited free video exports
+- Premium high-resolution exports
+- Advanced cinematic templates
+- Subscription for frequent athletes and creators
+- Pay-per-export option
+
+These are hypotheses to validate, not confirmed business requirements.
+
+## 11. Development Cost and Complexity
+
+Estimated engineering difficulty:
+- Basic 3D route viewer: 4/10
+- Animated flyover: 5–6/10
+- Polished cinematic video generator: 7/10
+
+Estimated MVP timeline:
+Approximately 1–3 weeks for a solo developer using existing libraries and AI-assisted coding tools.
+
+Potential infrastructure costs:
+- Local prototype: potentially free
+- Early hosted MVP: approximately $0–50/month, depending on usage
+- Production: variable terrain/map API, storage, and video-rendering costs
+
+Development estimates exclude extensive production hardening, commercial licensing costs, and complex video infrastructure.
+
+## 12. GitHub Repository Setup
+
+Repository name: terrainfly
+
+Description:
+Transform GPS activities into immersive 3D terrain visualizations and cinematic route flyovers, with support for Garmin FIT/GPX files, elevation mapping, and video exports.
+
+Suggested repository topics:
+garmin, gpx, 3d-maps, terrain-visualization, gps-tracking, mapbox, route-animation, geospatial
+
+Initial visibility: Private
+
+Initial license: None
+
+Reasoning:
+Keep the code proprietary during early experimentation and product validation. Consider MIT or Apache 2.0 if the project is later released as open source.
+
+Third-party SDKs, map tiles, and imagery remain subject to their own licensing terms.
+
+## 13. Suggested Initial Project Structure
+
+terrainfly/
+    README.md
+    idea.txt
+    package.json
+    src/
+        app/
+        components/
+            FileUploader/
+            TerrainViewer/
+            RouteOverlay/
+            CameraControls/
+            PlaybackControls/
+        lib/
+            gps/
+            terrain/
+            animation/
+            export/
+        types/
+    public/
+    tests/
+
+Architecture should remain modular so the map provider, camera system, and video exporter can be replaced independently.
+
+## 14. Immediate Next Step
+
+Build the simplest possible end-to-end prototype:
+
+Garmin FIT/GPX File
+    -> GPS Parsing
+    -> 3D Terrain Rendering
+    -> Route Overlay
+    -> Camera Flyover
+
+Do not begin with authentication, payments, AI-generated storytelling, cloud rendering infrastructure, or automatic Garmin synchronization.
+
+First prove that a real trek can be transformed into an attractive, accurate, interactive 3D flyover.
+
+Once this works, prioritize automatic cinematic camera movement and MP4 export.
+
+## Product Vision
+
+Turn every outdoor activity into a cinematic 3D story.
+
+TerrainFly should make creating an engaging adventure visualization as simple as uploading a GPS activity file.
