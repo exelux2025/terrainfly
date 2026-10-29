@@ -1,0 +1,2 @@
+# Drop sequential FIT/GPX/TCX files here for Load local path.
+# Activity files are gitignored; this folder is kept so the API can scan it.

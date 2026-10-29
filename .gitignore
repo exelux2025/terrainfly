@@ -6,12 +6,12 @@
 
 # Local GPS uploads and personal activity files
 uploads/
-samples/*.fit
-samples/*.gpx
-samples/*.tcx
-samples/*.FIT
-samples/*.GPX
-samples/*.TCX
+samples/**/*.fit
+samples/**/*.gpx
+samples/**/*.tcx
+samples/**/*.FIT
+samples/**/*.GPX
+samples/**/*.TCX
 
 # Dependencies
 /node_modules

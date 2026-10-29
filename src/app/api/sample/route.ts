@@ -1,39 +1,19 @@
-import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import { connection } from "next/server";
-
-const SAMPLE_EXTENSIONS = new Set([".gpx", ".fit", ".tcx"]);
+import { listTrackFiles, readTrackFile, trackResponse } from "@/lib/server/localTracks";
 
 export async function GET() {
   await connection();
   const dir = path.join(process.cwd(), "samples");
-
-  let files: string[] = [];
-  try {
-    files = await readdir(dir);
-  } catch {
-    return new Response("No samples directory", { status: 404 });
-  }
-
-  const fileName = files.find((name) =>
-    SAMPLE_EXTENSIONS.has(path.extname(name).toLowerCase()),
-  );
+  const files = await listTrackFiles(dir);
+  const fileName = files[0];
   if (!fileName) {
-    return new Response("No sample FIT/GPX/TCX file", { status: 404 });
+    return new Response(
+      "No local sample found. Put a .gpx, .fit, or .tcx file in the samples folder.",
+      { status: 404 },
+    );
   }
 
-  const filePath = path.join(dir, fileName);
-  const data = await readFile(filePath);
-  const ext = path.extname(fileName).toLowerCase();
-  const contentType =
-    ext === "fit" ? "application/octet-stream" : "application/gpx+xml";
-
-  return new Response(data, {
-    headers: {
-      "Content-Type": contentType,
-      "Content-Disposition": `inline; filename="${fileName}"`,
-      "X-Sample-Filename": fileName,
-      "Cache-Control": "no-store",
-    },
-  });
+  const data = await readTrackFile(dir, fileName);
+  return trackResponse(fileName, data);
 }

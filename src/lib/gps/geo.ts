@@ -24,6 +24,34 @@ export function haversineKm(a: LngLatEle, b: LngLatEle): number {
   return 2 * EARTH_RADIUS_KM * Math.asin(Math.min(1, Math.sqrt(h)));
 }
 
+export function destinationPoint(
+  lng: number,
+  lat: number,
+  bearingDegValue: number,
+  distanceKm: number,
+): { lng: number; lat: number } {
+  const toRad = (deg: number) => (deg * Math.PI) / 180;
+  const toDeg = (rad: number) => (rad * 180) / Math.PI;
+  const angular = distanceKm / EARTH_RADIUS_KM;
+  const bearing = toRad(bearingDegValue);
+  const lat1 = toRad(lat);
+  const lng1 = toRad(lng);
+  const lat2 = Math.asin(
+    Math.sin(lat1) * Math.cos(angular) +
+      Math.cos(lat1) * Math.sin(angular) * Math.cos(bearing),
+  );
+  const lng2 =
+    lng1 +
+    Math.atan2(
+      Math.sin(bearing) * Math.sin(angular) * Math.cos(lat1),
+      Math.cos(angular) - Math.sin(lat1) * Math.sin(lat2),
+    );
+  return {
+    lng: ((toDeg(lng2) + 540) % 360) - 180,
+    lat: toDeg(lat2),
+  };
+}
+
 export function bearingDeg(from: LngLatEle, to: LngLatEle): number {
   const toRad = (deg: number) => (deg * Math.PI) / 180;
   const toDeg = (rad: number) => (rad * 180) / Math.PI;
