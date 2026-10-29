@@ -234,14 +234,21 @@ Videos stay on disk / in the browser for the prototype. No AWS keys.
 - Credit-card numbers (add billing in each vendor dashboard yourself if needed)
 - AWS / S3 keys
 
-## Run V1 locally
+## Run locally
 
 Tokens stay in `.env` (already gitignored). The Mapbox token is restricted to port 3000.
 
 ```bash
 npm install
 npm test
+npm run lint
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Use **Load local sample** if `samples/` has a GPX/FIT file, or upload one. Toggle satellite/standard, then Play flyover.
+Open [http://localhost:3000](http://localhost:3000).
+
+- **Load local sample** — one GPS file in `samples/`
+- **Load local path** — sequential GPS files in `samples/path/` (played as one flyover, files stay unmerged)
+- **Upload** — drop a FIT, GPX, or TCX
+
+Personal GPS files are gitignored. Keep them in `samples/` locally. Customize look, color, and camera, then Play. Zoom and pitch at play start are kept.
